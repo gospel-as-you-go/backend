@@ -1,0 +1,107 @@
+service: gospel-as-you-go-backend
+
+custom:
+  s3:
+    storageBucketName: gospel.scraper.storage
+  sns:
+    propagationTopicName: gospel-propagation-topic-${opt:stage}
+    propagationTopicArn: { "Fn::Join" : ["", ["arn:aws:sns:${self:provider.region}:", { "Ref" : "AWS::AccountId" }, ":${self:custom.sns.propagationTopicName}" ] ]  }
+
+
+provider:
+  name: aws
+  runtime: java8
+  stage: ${opt:stage, 'live'}
+  region: ${opt:region, 'eu-west-3'}
+  memorySize: 256
+  timeout: 60
+  environment:
+    STORAGE_BUCKET: ${self:custom.s3.storageBucketName}
+    PROPAGATION_TOPIC: "${self:custom.sns.propagationTopicArn}"
+  iamRoleStatements:
+    - Effect: "Allow"
+      Action:
+        - "s3:Put*"
+        - "s3:Get*"
+        - "s3:Describe*"
+        - "s3:List*"
+      Resource:
+        - "arn:aws:s3:::${self:custom.s3.storageBucketName}"
+        - "arn:aws:s3:::${self:custom.s3.storageBucketName}/*"
+    - Effect: "Allow"
+      Action:
+        - "sns:Subscribe"
+        - "sns:Publish"
+      Resource:
+        - "${self:custom.sns.propagationTopicArn}"
+
+package:
+  artifact: target/scala-2.12/gospel-as-you-go-backend.jar
+
+functions:
+  GospelCalendarLinksSender:
+    handler: org.gospel.backend.lambdas.CalendarLinksHandler
+    events:
+      - schedule:
+          rate: cron(0 1 * * ? *)
+  GospelReadingsScraper:
+    handler: org.gospel.backend.lambdas.ReadingsHandler
+    events:
+      - sns: "${self:custom.sns.propagationTopicName}"
+
+resources:
+  Resources:
+    GospelCalendarLinksSenderLogGroup:
+      Type: AWS::Logs::LogGroup
+      Properties:
+        RetentionInDays: 3
+    GospelReadingsScraperLogGroup:
+      Type: AWS::Logs::LogGroup
+      Properties:
+        RetentionInDays: 3
+    GospelScraperReadingsStorage:
+      Type: AWS::S3::Bucket
+      Properties:
+        BucketName: ${self:custom.s3.storageBucketName}
+        AccessControl: PublicRead
+    GospelScraperReadingsStoragePolicy:
+      Type: 'AWS::S3::BucketPolicy'
+      Properties:
+        Bucket:
+          Ref: GospelScraperReadingsStorage
+        PolicyDocument:
+          Id: GospelScraperPublicReadPolicy
+          Version: "2012-10-17"
+          Statement:
+            - Sid: PublicReadForGetBucketObjects
+              Effect: Allow
+              Principal: '*'
+              Action: 's3:GetObject'
+              Resource:
+                Fn::Join:
+                  - ''
+                  - - 'arn:aws:s3:::'
+                    - Ref: GospelScraperReadingsStorage
+                    - /*
+  Outputs:
+    GospelPropagationTopicArn:
+      Description: "Gospel propagation topic arn"
+      Value:
+        'Ref': "SNSTopicGospelpropagationtopic${self:provider.stage}"
+      Export:
+        Name: "${self:service}-${self:provider.stage}-GospelPropagationTopicArn"
+    ScraperWebsiteURL:
+      Value:
+        Fn::GetAtt:
+          - GospelScraperReadingsStorage
+          - WebsiteURL
+      Description: URL for website hosted on S3
+    ScraperStorageSecureURL:
+      Value:
+        Fn::Join:
+          - ''
+          - - 'https://'
+            - Fn::GetAtt:
+                - GospelScraperReadingsStorage
+                - DomainName
+      Description: Name of S3 bucket to hold website content
