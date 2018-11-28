@@ -24,3 +24,7 @@ object Markup {
         markups.filter(_.ownText.contains(" ")).map(_.ownText).toSeq
     }
 }
+
+object Texts {
+
+}

@@ -1,0 +1,19 @@
+[
+  {
+    "sns": {
+      "messageAttributes": {},
+      "signingCertUrl": "https://sns.eu-west-3.amazonaws.com/SimpleNotificationService-ac565b8b1a6c5d002d285f9598aa1d9b.pem",
+      "messageId": "2ae34ed5-a96b-51d3-b1c8-1aadc18b1b54",
+      "message": "{\"name\":\"Asia - India\",\"link\":\"https://universalis.com/asia.india/20181205/mass.htm\"}",
+      "unsubscribeUrl": "https://sns.eu-west-3.amazonaws.com/?Action=Unsubscribe&SubscriptionArn=arn:aws:sns:eu-west-3:766457812345:gospel-propagation-topic-live:ab12a904-1f21-4ebc-bcfa-35d3fc22da70",
+      "type": "Notification",
+      "signatureVersion": 1,
+      "signature": "fjdslfjsdfldskjfsdlfj+5U+2+OQ884AkMMPaPJgWIOlXI5zlF8R0JgOV49W/X4JGry1DL5Q8WzpQcgK1MXXZUsUjtvNLNJuSpw1NMqTscPCawLrUeQxU2pQhFmfOWAji3uY4C6YRODWqZGnBYb3gAA2tre/bnq2QrlPVUnQLpYt0YziF3E0dlSLGMHA/BXxCjN1em9VShlba2BYT5z1b1lMr7hEQ1k0lifh9rv/oGrquEELbS6qBjuTTl4chQenaQNLIEEJuYotvardTRoEqZIrWlFhit84oUNWUJoglLdAxt0zVA==",
+      "timestamp": "2018-11-28T09:57:52.539Z",
+       "topicArn": "arn:aws:sns:eu-west-3:766457812345:gospel-propagation-topic-live"
+    },
+    "eventVersion": "1.0",
+    "eventSource": "aws:sns",
+    "eventSubscriptionArn": "arn:aws:sns:eu-west-3:766457812345:gospel-propagation-topic-live:ab12a904-1f21-4ebc-bcfa-35d3fc22da70"
+  }
+]

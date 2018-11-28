@@ -14,7 +14,6 @@ object References {
         val psalmSplit = firstSplit._2.span(x => x.startsWith(psalmPrefix))
         val psalms = psalmSplit._1
         val secondSplit = psalmSplit._2.span(x => !x.matches(gospelRegex))
-        val dto = ReadingsDto(firsts, psalms, secondSplit._1, secondSplit._2)
-        \/-(dto)
+        \/-(ReadingsDto(firsts, psalms, secondSplit._1, secondSplit._2))
     }
 }

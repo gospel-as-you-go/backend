@@ -14,7 +14,7 @@ provider:
   stage: ${opt:stage, 'live'}
   region: ${opt:region, 'eu-west-3'}
   memorySize: 256
-  timeout: 60
+  timeout: 120
   environment:
     STORAGE_BUCKET: ${self:custom.s3.storageBucketName}
     PROPAGATION_TOPIC: "${self:custom.sns.propagationTopicArn}"

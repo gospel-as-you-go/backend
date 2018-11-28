@@ -13,6 +13,7 @@ releaseNextVersion := { ver => Version(ver).map(_.bumpMinor.string).getOrElse("E
 assemblyJarName in assembly := "gospel-as-you-go-backend.jar"
 
 libraryDependencies ++= Seq(
+    "com.fasterxml.jackson.module" %% "jackson-module-scala" % "2.9.7",
     "com.amazonaws" % "aws-java-sdk-sns" % "1.11.456",
     "com.amazonaws" % "aws-java-sdk-s3" % "1.11.456",
     "com.amazonaws" % "aws-lambda-java-events" % "2.2.1",
