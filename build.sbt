@@ -20,6 +20,9 @@ libraryDependencies ++= Seq(
     "com.amazonaws" % "aws-lambda-java-core" % "1.2.0",
     "com.themillhousegroup" %% "scoup" % "0.4.6",
     "org.scalaz" %% "scalaz-core" % "7.2.27",
+    "org.mockito" %% "mockito-scala" % "1.0.5" % Test,
+    "org.scalactic" %% "scalactic" % "3.0.5" % Test,
+    "org.scalatest" %% "scalatest" % "3.0.5" % Test,
 )
 
 scalacOptions ++= Seq(

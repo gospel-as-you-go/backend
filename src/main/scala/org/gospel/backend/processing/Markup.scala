@@ -1,6 +1,8 @@
 package org.gospel.backend.processing
 
-import scalaz.{ \/, \/-, -\/ }
+import java.net.URLEncoder
+
+import scalaz.{-\/, \/, \/-}
 import com.themillhousegroup.scoup.Scoup
 import com.themillhousegroup.scoup.ScoupImplicits._
 import org.gospel.backend.tools.Calendar
@@ -23,8 +25,4 @@ object Markup {
         val markups = document.select("table th[align=right]")
         markups.filter(_.ownText.contains(" ")).map(_.ownText).toSeq
     }
-}
-
-object Texts {
-
 }

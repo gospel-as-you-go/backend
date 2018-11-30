@@ -4,9 +4,10 @@ custom:
   s3:
     storageBucketName: gospel.scraper.storage
   sns:
-    propagationTopicName: gospel-propagation-topic-${opt:stage}
-    propagationTopicArn: { "Fn::Join" : ["", ["arn:aws:sns:${self:provider.region}:", { "Ref" : "AWS::AccountId" }, ":${self:custom.sns.propagationTopicName}" ] ]  }
-
+    calendarTopicName: gospel-calendar-topic-${opt:stage}
+    referencesTopicName: gospel-references-topic-${opt:stage}
+    calendarTopicArn: { "Fn::Join" : ["", ["arn:aws:sns:${self:provider.region}:", { "Ref" : "AWS::AccountId" }, ":${self:custom.sns.calendarTopicName}" ] ]  }
+    referencesTopicArn: { "Fn::Join" : ["", ["arn:aws:sns:${self:provider.region}:", { "Ref" : "AWS::AccountId" }, ":${self:custom.sns.referencesTopicName}" ] ]  }
 
 provider:
   name: aws
@@ -17,7 +18,8 @@ provider:
   timeout: 120
   environment:
     STORAGE_BUCKET: ${self:custom.s3.storageBucketName}
-    PROPAGATION_TOPIC: "${self:custom.sns.propagationTopicArn}"
+    CALENDAR_TOPIC: "${self:custom.sns.calendarTopicArn}"
+    REFERENCES_TOPIC: "${self:custom.sns.referencesTopicArn}"
   iamRoleStatements:
     - Effect: "Allow"
       Action:
@@ -33,7 +35,8 @@ provider:
         - "sns:Subscribe"
         - "sns:Publish"
       Resource:
-        - "${self:custom.sns.propagationTopicArn}"
+        - "${self:custom.sns.calendarTopicArn}"
+        - "${self:custom.sns.referencesTopicArn}"
 
 package:
   artifact: target/scala-2.12/gospel-as-you-go-backend.jar
@@ -47,7 +50,11 @@ functions:
   GospelReadingsScraper:
     handler: org.gospel.backend.lambdas.ReadingsHandler
     events:
-      - sns: "${self:custom.sns.propagationTopicName}"
+      - sns: "${self:custom.sns.referencesTopicName}"
+  GospelReferencesScraper:
+    handler: org.gospel.backend.lambdas.ReferencesHandler
+    events:
+      - sns: "${self:custom.sns.calendarTopicName}"
 
 resources:
   Resources:
@@ -56,6 +63,10 @@ resources:
       Properties:
         RetentionInDays: 3
     GospelReadingsScraperLogGroup:
+      Type: AWS::Logs::LogGroup
+      Properties:
+        RetentionInDays: 3
+    GospelReferencesScraperLogGroup:
       Type: AWS::Logs::LogGroup
       Properties:
         RetentionInDays: 3
@@ -85,11 +96,11 @@ resources:
                     - /*
   Outputs:
     GospelPropagationTopicArn:
-      Description: "Gospel propagation topic arn"
+      Description: "Gospel calendar topic arn"
       Value:
-        'Ref': "SNSTopicGospelpropagationtopic${self:provider.stage}"
+        'Ref': "SNSTopicGospelcalendartopic${self:provider.stage}"
       Export:
-        Name: "${self:service}-${self:provider.stage}-GospelPropagationTopicArn"
+        Name: "${self:service}-${self:provider.stage}-GospelCalendarTopicArn"
     ScraperWebsiteURL:
       Value:
         Fn::GetAtt:

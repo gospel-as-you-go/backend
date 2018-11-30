@@ -3,19 +3,17 @@ package org.gospel.backend.processing
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.scala.DefaultScalaModule
 import org.gospel.backend.processing.Markup.getMarkup
-import org.gospel.backend.processing.References.extractReferences
+import References.extractReferences
 import org.gospel.backend.processing.dto.ReadingsDto
 import org.gospel.backend.tools
-import org.gospel.backend.tools.{Calendar, Calendars}
+import org.gospel.backend.tools.{Calendar, Calendars, Json}
 import org.gospel.backend.tools.Calendars.calendars
 import scalaz.{\/, \/-}
 import scalaz.std.`try`.toDisjunction
 
 import scala.util.Try
 
-object Readings {
-
-    private val jsonMapper = new ObjectMapper().registerModule(DefaultScalaModule)
+object RawReadings {
 
     def getReadings(message: String): Throwable \/ Seq[ReadingsDto] = {
         for {
@@ -37,6 +35,6 @@ object Readings {
     }
 
     private def getCalendar(message: String): Throwable \/ Calendar = toDisjunction(Try {
-        jsonMapper.readValue(message, classOf[Calendar])
+        Json.toObject(classOf[Calendar])(message)
     })
 }

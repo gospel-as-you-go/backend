@@ -1,6 +1,7 @@
 import com.amazonaws.services.lambda.runtime.events.SNSEvent
 import com.fasterxml.jackson.databind.ObjectMapper
-import org.gospel.backend.processing.Readings._
+import org.gospel.backend.processing.RawReadings._
+import org.gospel.backend.processing.{AugmentedReadings, FunctionConfig, References, Texts}
 import org.gospel.backend.tools.Calendars
 import org.gospel.backend.tools.functional._
 
@@ -18,9 +19,8 @@ object App {
     def main(args: Array[String]): Unit = {
 //        val f1 = addOne >>> addOne >>> addOne >>> divideByZero >>> addOne
 //        val f2 = addOne >>> addOne >>> addOne >>> addOne
-
-        val message = "{\"name\":\"General\",\"link\":\"https://universalis.com/20181128/mass.htm\",\"bucketKey\":\"gospel.scraper.storage/general/20181128/readings.json\",\"versions\":[\"NRSVCE\",\"NRSV\",\"SG21\",\"DHH\",\"ERV-AR\",\"CEI\",\"OL\",\"RUSV\"]}"
-        val res = getReadings(message)
+        val message = " { \"firsts\": [ \"Romans 10:9-18\" ], \"psalms\": [ \"Psalm 18(19):2-5\" ], \"seconds\": [], \"gospels\": [ \"Matthew 4:18-22\" ], \"bucketKey\": \"gospel.scraper.storage/general/20181130/NRSVCE/readings.json\", \"version\": \"NRSVCE\" }"
+        val res = FunctionConfig.augmentedReadings(message)
         println(res)
     }
 }
