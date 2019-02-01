@@ -23,9 +23,9 @@ object AugmentedReadings {
     private def augment(refToText: RefToText, readings: ReadingsDto): ReadingsUnion = {
         val refsToTexts: Seq[String] => Seq[String] = mapRefsToTexts(refToText)
         val result = readings.copy(firsts = refsToTexts(readings.firsts),
-                      seconds = refsToTexts(readings.seconds),
-                      psalms = refsToTexts(readings.psalms),
-                      gospels = refsToTexts(readings.gospels))
+                                   seconds = refsToTexts(readings.seconds),
+                                   psalms = refsToTexts(readings.psalms),
+                                   gospels = refsToTexts(readings.gospels))
         result |> \/-.apply
     }
 
